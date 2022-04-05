@@ -1,4 +1,4 @@
-#include <VGAX.h>
+#include "src/VGAX/VGAX.h"
 #include "./fonts/bigfont.h"
 #include "./fonts/smallfont.h"
 
