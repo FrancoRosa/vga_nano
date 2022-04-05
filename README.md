@@ -1,9 +1,8 @@
-# VGA_NANO
+# vga nano
 > Use an VGA as a data display with arduino nano
 
 ## Summary
-This project uses the [VGAX](https://github.com/smaffer/vgax) library from [smaffer](https://github.com/smaffer)
-Please go to his repo to see the wiring, more details and examples
+This project uses the [VGAX](https://github.com/smaffer/vgax) library from [smaffer](https://github.com/smaffer). Please, go to his repo to see the wiring, features and examples.
 
 ![alt](./bonus/demo.gif)
 
