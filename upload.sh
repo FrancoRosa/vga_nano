@@ -1,4 +1,4 @@
-PORT=/dev/ttyUSB0
+PORT=COM5
 
 echo '... compile & upload'
 echo '... target:' ${PORT}

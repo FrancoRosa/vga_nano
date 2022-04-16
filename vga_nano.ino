@@ -11,16 +11,16 @@ const int foreground2 = 2;
 const int foreground3 = 3;
 
 // placeholders
-char str0[] = "3172W";
-char str1[] = "50.7Hz";
-char str2[] = "25.6\"C";
-char str3[] = "3.5Bar";
+char str0[] = "0000W";
+char str1[] = "00.0Hz";
+char str2[] = "00.0\"C";
+char str3[] = "0.0Bar";
 
 // color threshold int
 const int str0_th = 2000;
-const int str1_th = 62;
-const int str2_th = 45;
-const int str3_th = 3;
+const int str1_th = 620;
+const int str2_th = 450;
+const int str3_th = 22;
 
 // data input buffer
 const char buffer_size = 20;
@@ -28,13 +28,7 @@ volatile int buffer_i = 0;
 volatile bool completed = false;
 char buffer[buffer_size];
 
-void setup()
-{
-    vga.begin();
-    vga.clear(background);
-    Serial.begin(9600);
-    Serial.println("...start");
-}
+
 
 void print_value(char text[], int color, int x, int y)
 {
@@ -85,7 +79,6 @@ void process_serial(char c)
     // frequency:560/10
     // temperature:456/10
     // pressure:23/10
-    Serial.write(c);
 
     if (c == '\r' && buffer_i > 1)
     {
@@ -94,6 +87,7 @@ void process_serial(char c)
         completed = true;
         vga.clear(background);
         build_strings();
+        display_values();
     }
     else
     {
@@ -108,19 +102,19 @@ void process_serial(char c)
 int i = 0;
 char str_i[10];
 
-int to_int(char str[], int len)
+int to_int(char str[], int start, int len)
 {
     int sum = 0;
     for (int i = 0; i < len; i++)
     {
-        sum = sum * 10 + (str[0] - 48);
+        sum = sum * 10 + (str[start+i] - 48);
     }
     return sum;
 }
 
-int compare(char str[], int len, int threshold, bool direct)
+int compare(char str[], int start, int len, int threshold, bool direct)
 {
-    int value = to_int(str, len);
+    int value = to_int(str, start, len);
     if (direct)
     {
         return value > threshold ? foreground1 : foreground2;
@@ -131,20 +125,30 @@ int compare(char str[], int len, int threshold, bool direct)
     }
 }
 
-void loop()
-{
 
+void display_values() {
     print_label("potencia", foreground3, 0, 0);
-    print_value(str0, compare(str0, 4, str0_th, false), 0, 5);
+    print_value(str0, compare(buffer,0, 4, str0_th, false), 0, 5);
 
     print_label("frecuencia", foreground3, 66, 0);
-    print_value(str1, compare(str1, 2, str1_th, true), 66, 5);
+    print_value(str1, compare(buffer,4, 3, str1_th, true), 66, 5);
 
     print_label("temperatura", foreground3, 0, 31);
-    print_value(str2, compare(str2, 2, str2_th, true), 0, 36);
+    print_value(str2, compare(buffer,7,3, str2_th, true), 0, 36);
 
     print_label("presion", foreground3, 66, 31);
-    print_value(str3, compare(str3, 1, str3_th, false), 66, 36);
+    print_value(str3, compare(buffer,10, 2, str3_th, false), 66, 36);
+}
 
+void setup()
+{
+    vga.begin();
+    vga.clear(background);
+    display_values();
+    Serial.begin(9600);
+}
+
+void loop()
+{
     read_serial();
 }
